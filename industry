@@ -1,0 +1,36 @@
+industry = clean_data['行业类型']
+industry = industry.dropna()
+industry = industry.str.split(',',2,expand = True)
+industry = pd.concat([industry[0],industry[1]])
+industry = industry.str.split('、',2,expand = True)
+industry = pd.concat([industry[0],industry[1]])
+industry = pd.DataFrame(industry)
+industry = industry.replace({'null':np.nan})
+industry = industry.dropna()
+industry = industry.reset_index(drop = True)
+industry = industry.rename(columns = {0:'行业'})
+
+industry = industry.groupby(by = '行业')['行业'].agg(
+        {'数量':np.size}).sort_values(by = '数量',ascending = False)
+
+industry = industry[industry.数量 > 3]
+
+plt.figure(figsize=(10,10))
+#设置x轴柱子的个数
+x = np.arange(len(industry.index)) 
+#设置y轴的数值，需将numbers列的数据先转化为数列，再转化为矩阵格式
+y = np.array(list(industry.数量))
+xticks1=list(industry.index) #准备替换行标签
+#画出柱状图
+plt.bar(x,y,width = 0.35,align='center',color = 'c',alpha=0.8)
+#设置x轴的刻度，将构建的xticks代入，同时由于课程类目文字较多，在一块会比较拥挤和重叠，因此设置字体和对齐方式
+plt.xticks(x,xticks1,size='small',rotation=30)
+#x、y轴标签与图形标题
+plt.xlabel('行业名称')
+plt.ylabel('需求量')
+plt.title('会计师不同行业需求量')
+#设置数字标签
+for a,b in zip(x,y):
+    plt.text(a, b+1, '%.0f' % b, 
+         ha='center', va= 'bottom',fontsize=10)
+plt.savefig('会计师不同行业需求量.png', dpi=400)
