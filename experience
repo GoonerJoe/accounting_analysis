@@ -1,0 +1,26 @@
+exp = clean_data['工作经验'].str.replace('经验','')    
+exp = exp.str.replace(' /','')
+
+exp.unique()
+
+exp = exp.drop(exp[exp == 'null'].index)
+exp = pd.DataFrame(exp)
+exp = exp.replace({'应届毕业生':'1年以下'})
+
+exp = exp.groupby(by = '工作经验')['工作经验'].agg(
+        {'数量':np.size}).sort_values(by = '数量',ascending = False)
+
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+plt.axis('equal')
+plt.pie(
+    exp['数量'], 
+    labels=exp.index, 
+    autopct='%.2f%%',
+    #explode = expl
+)  
+plt.title('会计师经验要求')
+plt.savefig('会计师经验要求.png', dpi=400)
