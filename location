@@ -1,0 +1,17 @@
+location = clean_data['工作地点'].str.replace('/','')
+location = location.dropna()
+
+location = pd.DataFrame(location)
+location = location.groupby(by = '工作地点')['工作地点'].agg(
+        {'数量':np.size}).sort_values(by = '数量',ascending = False)
+
+location = location.drop(labels = 'null',axis = 0)
+
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+location.plot(kind = 'bar',figsize = (10,10))
+plt.title('会计师地点分布')
+plt.savefig('会计师地点分布.png')
