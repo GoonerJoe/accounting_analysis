@@ -1,0 +1,27 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from pandas import Series,DataFrame
+from pandas import read_excel
+import matplotlib
+import jieba
+import jieba.analyse
+from wordcloud import WordCloud
+import random
+from scipy.misc import imread
+
+#数据读取
+data = read_excel(
+        'C:\\Users\\think\\Desktop\\数据分析项目\\会计.xlsx',
+      sheetname = 'Sheet2')
+
+#数据去重
+#根据条件检查是否有重复项
+data.duplicated(subset=['岗位名称','公司名称','工资','职位描述'])
+
+#根据条件删除重复项
+clean_data = data.drop_duplicates(
+        subset=['岗位名称','公司名称','工资','职位描述'])
+
+#查看清理后的数据信息
+clean_data.info()
