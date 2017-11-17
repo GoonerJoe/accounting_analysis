@@ -1,0 +1,15 @@
+edu = clean_data['学历要求'].str.replace('/','')
+edu = edu.drop(edu[edu == 'null'].index)
+edu = pd.DataFrame(edu)
+edu = edu.groupby(by = '学历要求')['学历要求'].agg(
+        {'数量':np.size}).sort_values(by = '数量',ascending = False)
+clean_data['学历要求'].unique()
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+
+edu.plot(kind = 'bar',figsize = (10,10))
+plt.title('会计师最低学历要求')
+plt.savefig('会计师最低学历要求.png', dpi=400)
