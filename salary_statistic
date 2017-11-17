@@ -1,0 +1,36 @@
+salary_1 = clean_data['工资'].str.split('-',2,expand = True)
+salary_1 = salary_1.rename(columns = {0:'最低工资',1:'最高工资'})
+salary_1 = salary_1.dropna()
+
+for column in salary_1.columns:
+    salary_1[column] = salary_1[column].str.lower()
+    salary_1[column] = salary_1[column].str.replace('k','')
+    salary_1[column] = salary_1[column].astype('int')
+
+salary_1['平均工资'] = (salary_1['最低工资'] + salary_1['最高工资'])/2
+
+#去除异常值
+Q1 = salary_1.quantile(0.25,axis = 0,interpolation = 'linear')
+Q3 = salary_1.quantile(0.75,axis = 0,interpolation = 'linear')
+IQR = Q3 - Q1
+mi = Q1 - 1.5*IQR
+ma = Q3 + 1.5*IQR
+
+for x in salary_1:
+    lst_1 = list(salary_1[x][salary_1[x] < mi[x]].index)
+for x in salary_1:
+    lst_2 = list(salary_1[x][salary_1[x] > ma[x]].index)
+
+lst = lst_1 + lst_2
+salary_1 = salary_1.drop(lst)
+
+#绘制箱型图
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+plt.yticks(range(0,20,2))
+plt.boxplot(x=salary_1.values,labels=salary_1.columns,
+            patch_artist=True,sym='r*')
+plt.savefig('会计师工资分布.png')
