@@ -1,0 +1,35 @@
+financing = data[['发展阶段']]
+financing = financing.replace({'null':np.nan}).dropna()
+
+financing = financing.groupby(by = '发展阶段')['发展阶段'].agg({'数量':np.size})
+
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+
+plt.axis('equal')
+plt.pie(
+        financing['数量'],
+        labels = financing.index,
+        autopct='%.2f%%')
+plt.title('会计师公司发展阶段')
+plt.savefig('会计师公司发展阶段.png', dpi=400)
+
+len(financing.index)
+
+index = np.arange(len(financing.index))
+number = np.array(list(financing.数量))
+financing = financing.sort_values(by = '数量', ascending = False)
+plt.bar(
+        index,
+        financing.数量,
+        color = 'c')
+plt.xticks(index,financing.index,rotation = 30)
+plt.yticks(np.arange(0,180,20))
+
+for a,b in zip(index,number):
+    plt.text(a,b+2,'%.0f' % b,ha='center', va= 'bottom',fontsize=10)
+
+plt.title('会计师公司发展阶段')
+plt.savefig('会计师公司发展阶段.png', dpi=400)
