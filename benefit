@@ -1,0 +1,34 @@
+benefit = data[['职位诱惑']]
+
+jieba.load_userdict('C:\\Users\\Administrator\\Desktop\\dict.txt')
+
+lst = []
+for index,row in benefit.iterrows():
+    content = row['职位诱惑']
+    segs = jieba.cut(content)
+    for seg in segs:
+        if len(seg.strip()) > 1:
+            lst.append(seg)
+keyword = pd.DataFrame({'关键词':lst})
+
+keyword = keyword.groupby(by = '关键词')['关键词'].agg({'数量':np.size})
+
+dic = dict(zip(keyword.index,keyword.数量))
+
+from wordcloud import WordCloud, ImageColorGenerator
+from scipy.misc import imread
+
+img = imread('C:\\Users\Administrator\\Desktop\\1.jpg')
+
+wordcloud = WordCloud(
+        font_path="C:\\Windows\\Fonts\\SIMYOU.TTF",
+        max_words=200,background_color='white',
+        mask=img,
+        max_font_size=100,
+        font_step=1)
+wordcloud.generate_from_frequencies(dic)
+##plt.imshow(wordcloud .recolor(color_func=imagecolor))
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
+wordcloud.to_file('C:\\Users\Administrator\\Desktop\\职位诱惑.jpg')
