@@ -1,0 +1,63 @@
+skills = pd.read_csv(
+    "C:\\Users\\think\\Desktop\\skill.txt", 
+    encoding='utf8', 
+    index_col=False,
+    quoting=3,
+    sep="\t"
+)
+
+skill =  clean_data[['职位描述']]
+salary = salary_1[['平均工资']]
+slary_skill = skill.merge(salary,left_index = True,
+                          right_index = True)
+
+skills = skills.skills.tolist()
+lst = []
+lst1 = []
+
+for index, row in slary_skill.iterrows():
+    content = row['职位描述']
+    salary = row['平均工资']
+    for x in skills:
+        if x in content.upper():
+            lst.append(x)
+            lst1.append(salary)
+            
+salary_skills = pd.DataFrame(
+        {'职称技能':lst,
+         '平均工资':lst1}) 
+
+a = salary_skills.职称技能.unique().tolist()    
+dic = {'用友':'用友',
+       'OFFICE':'OFFICE',
+       'EXCEL':'OFFICE',
+       'WORD':'OFFICE',
+       '中级':'中级职称',
+       '中级职称':'中级职称',
+       'PPT':'OFFICE',
+       '金蝶':'金蝶',
+       '注册':'CPA',
+       'CPA':'CPA',
+       '注册会计师':'CPA'}
+
+salary_skills['职称技能'] = salary_skills['职称技能'].map(dic)
+    
+salary_skills_1 = salary_skills.groupby(by = '职称技能',as_index = False)['平均工资'].agg(
+        {'工资':np.average})
+
+salary_skills_2 = salary_skills.groupby(by = '职称技能',as_index = False)['职称技能'].agg(
+        {'需求量':np.size})
+
+salary_skills = salary_skills_1.merge(salary_skills_2)
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+index = np.arange(0,5)
+plt.scatter(index,salary_skills['工资'],
+            s = salary_skills['需求量'])
+plt.xticks(index,salary_skills['职称技能'],rotation = 30)
+plt.yticks(np.arange(6,8.5,0.2))
+plt.title('会计师不同职称技能的需求量与平均工资')
+plt.savefig('会计师不同职称技能的需求量与平均工资.png', dpi=400)
