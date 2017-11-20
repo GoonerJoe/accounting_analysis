@@ -1,0 +1,16 @@
+salary_exp_edu = salary_1.join([exp,edu],
+                                how = 'inner')
+
+
+salary_exp_edu = salary_exp_edu.iloc[:,2:]
+
+table = pd.pivot_table(salary_exp_edu,
+        index = ['学历要求'],
+        columns = ['工作经验'],
+        values = '平均工资',
+        aggfunc = np.average)
+
+
+table.plot(kind = 'bar',figsize = (10,10))
+plt.title('会计师工作经验，学历与工资')
+plt.savefig('会计师工作经验，学历与工资.png', dpi=400)
