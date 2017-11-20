@@ -1,0 +1,63 @@
+desc = clean_data[['职位描述']]
+desc = desc.dropna()
+
+for index, row in desc.iterrows():
+    lst = []
+    content = row['职位描述']
+    segs = jieba.cut(content)
+    for seg in segs:
+        if len(seg.strip()) > 1:
+            lst.append(seg)
+        row['职位描述'] = ' '.join(lst)
+
+stopwords = pd.read_csv(
+    "C:\\Users\\think\\Desktop\\StopwordsCN.txt", 
+    encoding='utf8', 
+    index_col=False,
+    quoting=3,
+    sep="\t"
+)
+
+CV = CountVectorizer(
+        stop_words = list(stopwords.stopword.values),
+        min_df = 0,
+        token_pattern = r"\b\w+\b")
+
+textvector = CV.fit_transform(desc['职位描述'])
+
+textvector.todense()
+textvector.toarray().shape
+
+CV.get_feature_names()
+
+tfidf = TfidfTransformer()
+tfidf = tfidf.fit_transform(textvector)
+
+sort = np.argsort(tfidf.toarray(), axis=1)[:, -10:]
+names = CV.get_feature_names()
+keywords = pd.Index(names)[sort].values 
+
+lst = []
+for x in keywords:
+    for y in x:
+       lst.append(y)
+       
+keyword = pd.DataFrame({'关键词':lst})
+keyword = keyword.groupby(by = '关键词')['关键词'].agg(
+        {'数量':np.size}).sort_values(by = '数量',ascending = False)
+dictionary = dict(zip(keyword.index,keyword['数量']))
+
+img = imread('C:\\Users\\think\\Desktop\\1.png')
+
+wordcloud = WordCloud(
+        font_path="C:\\Windows\\Fonts\\SIMYOU.TTF",
+        max_words=200,background_color='white',
+        mask=img,
+        max_font_size=100,
+        font_step=1)
+wordcloud.generate_from_frequencies(dictionary)
+##plt.imshow(wordcloud .recolor(color_func=imagecolor))
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
+wordcloud.to_file('C:\\Users\\think\\Desktop\\DA\\会计师任职要求.jpg')
