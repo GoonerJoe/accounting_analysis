@@ -1,0 +1,17 @@
+salary_loc = salary_1.merge(location,
+                            left_index = True,
+                            right_index = True)
+salary_loc = salary_loc.groupby(by = '工作地点')['平均工资'].agg(
+        {'平均工资':np.average}).sort_values(by = '平均工资',ascending = False)
+
+index = np.arange(len(salary_loc.index))
+plt.bar(index,salary_loc['平均工资'],
+        color = 'c')
+number = np.array(salary_loc['平均工资'].tolist())
+plt.xticks(index,salary_loc.index,size='small',rotation = 90)
+plt.yticks(np.arange(0,10,1))
+for a,b in zip(index,number):
+    plt.text(a,b+0.2,'%.0f' % b,
+             ha = 'center', va = 'bottom',fontsize = 10)
+plt.title('会计师工作地点与工资')
+plt.savefig('会计师工作地点与工资.png', dpi=400)
