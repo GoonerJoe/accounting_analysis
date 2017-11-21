@@ -34,3 +34,11 @@ plt.yticks(range(0,20,2))
 plt.boxplot(x=salary_1.values,labels=salary_1.columns,
             patch_artist=True,sym='r*')
 plt.savefig('会计师工资分布.png')
+
+plt.hist(
+    salary_1['平均工资'], bins=20, 
+    cumulative=False, color='pink'
+)
+plt.xticks(np.arange(0,22,2))
+plt.title('会计师工资分布')
+plt.savefig('会计师工资分布1.png',dpi = 300)
