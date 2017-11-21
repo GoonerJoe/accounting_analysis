@@ -1,0 +1,43 @@
+industry = clean_data[['行业类型']]
+industry = industry.dropna()
+industry_salary = salary_1[['平均工资']].merge(industry, 
+                          how = 'inner',left_index = True,
+                          right_index = True)
+
+
+lst = []
+lst1 = []
+lst2 = []
+lst3 = []
+for index, row in industry_salary.iterrows():
+    area = row['行业类型']
+    money = row['平均工资']
+    if ',' in area:
+        for x in area.split(','):
+            lst.append(money)
+            lst1.append(x)
+    if '、' in area:
+        for y in area.split('、'):
+            lst2.append(money)
+            lst3.append(y)
+            
+
+industry_salary_1 = pd.DataFrame({'平均工资':lst,
+                                  '行业':lst1})
+industry_salary_2 = pd.DataFrame({'平均工资':lst2,
+                                  '行业':lst3})
+industry_salary =  pd.concat(
+        [industry_salary_1,industry_salary_2])         
+            
+industry_salary = industry_salary.groupby(by = '行业')['平均工资'].agg(
+        {'平均工资':np.average}).sort_values(by = '平均工资',ascending = True)
+
+                   
+industry_salary.plot(kind = 'barh',color = 'c',figsize = (10,10))
+plt.xticks(np.arange(0,12,2))
+x = np.array(list(industry_salary['平均工资']))
+y = np.arange(len(industry_salary.index))
+for a,b in zip(x,y):
+    plt.text(a+0.2,b,'%.1f' % a,ha = 'center',va = 'center')          
+plt.title('会计师行业与工资')
+plt.savefig('会计师行业与工资.png', dpi=400) 
