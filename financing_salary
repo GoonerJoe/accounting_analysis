@@ -1,0 +1,15 @@
+financing_salary = salary_1[['平均工资']].merge(clean_data[['发展阶段']], 
+                          how = 'inner',left_index = True,
+                          right_index = True)            
+            
+financing_salary = financing_salary.dropna()             
+financing_salary = financing_salary.groupby(by = '发展阶段')['平均工资'].agg(
+        {'平均工资':np.average}).sort_values(by = '平均工资',ascending = True)            
+financing_salary.plot(kind = 'barh',color = 'pink',figsize = (10,10))
+plt.xticks(np.arange(0,12,2))
+x = np.array(list(financing_salary['平均工资']))
+y = np.arange(len(financing_salary.index))
+for a,b in zip(x,y):
+    plt.text(a+0.2,b,'%.1f' % a,ha = 'center',va = 'center')          
+plt.title('会计师发展阶段与工资')
+plt.savefig('会计师发展阶段与工资.png', dpi=400)       
